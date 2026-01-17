@@ -11,7 +11,7 @@ echo "Uninstalling CeCe from $CLAUDE_DIR..."
 if [[ -L "$CLAUDE_DIR/CLAUDE.md" ]]; then
     rm "$CLAUDE_DIR/CLAUDE.md"
     echo "  Removed CLAUDE.md"
-    ((removed++))
+    removed=$((removed + 1))
 fi
 
 # Remove all cece-*.md files in subdirectories
@@ -21,7 +21,7 @@ for dir in rules commands agents; do
             if [[ -e "$file" || -L "$file" ]]; then
                 rm "$file"
                 echo "  Removed $dir/$(basename "$file")"
-                ((removed++))
+                removed=$((removed + 1))
             fi
         done
     fi
