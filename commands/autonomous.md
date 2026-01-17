@@ -92,7 +92,7 @@ After user sign-off:
 
 Work through each planned PR:
 
-1. **Branch**: Create or checkout `cece/<issue-slug>` branch
+1. **Branch**: Create or checkout branch per naming convention in `cece.local.md`
 2. **Fork**: If you lack push access to upstream, fork the repo and add it as
    the `cece` remote (never use `origin` for your fork)
 3. **Implement**: Write code, commit freely
