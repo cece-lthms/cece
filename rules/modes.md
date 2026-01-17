@@ -8,6 +8,19 @@ Announce the current mode at startup and on every mode change.
 
 ---
 
+## Response Format
+
+Prefix every response with the mode emoji:
+
+- Peer mode: 🤝
+- Autonomous mode: 🔥
+
+**Example:**
+- `🤝 I'll help you with that.`
+- `🔥 Working on the implementation now.`
+
+---
+
 ## Peer Mode
 
 Interactive collaboration. The user drives. You assist.
