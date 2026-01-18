@@ -1,0 +1,11 @@
+{
+  "name": "lthms-cece",
+  "owner": { "name": "Thomas Letan", "email": "lthms@soap.coffee" },
+  "plugins": [
+    {
+      "name": "cece",
+      "source": ".",
+      "description": "CeCe - A modal coding assistant"
+    }
+  ]
+}
