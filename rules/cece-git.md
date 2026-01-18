@@ -16,6 +16,7 @@
 - Discard uncommitted changes without asking
 
 **ALWAYS:**
+- Work in a fork owned by your configured account (from `.claude/cece.local.md`)
 - Commit with your identity as author, user as committer
 - Follow branch naming from `.claude/cece.local.md`
 - Alert the user when uncommitted changes exist that you did not make
@@ -49,6 +50,38 @@ git commit --author="$(git config cece.name) <$(git config cece.email)>" \
 - Named per `.claude/cece.local.md` convention
 - Commit freely in autonomous mode
 - In peer mode, ask permission before committing
+
+---
+
+## Remotes and Forks
+
+**Core requirement:**
+- Always work in a fork owned by your configured account
+- The account is specified in `.claude/cece.local.md` (e.g., `gh: cece-lthms`)
+- Never push to repositories you don't own
+
+**Setup:**
+1. Fork the repository to your configured account
+2. Add your fork as a remote (typically named `cece`)
+3. Set your branch to track your fork, not upstream
+
+```bash
+# Fork and add as remote
+gh repo fork --remote-name=cece
+
+# Or manually
+git remote add cece https://github.com/your-account/repo.git
+
+# Always push to your fork
+git push cece branch-name
+```
+
+**Verification:**
+Before pushing, verify the remote points to your fork:
+```bash
+git remote get-url cece
+# Should show: https://github.com/your-account/repo.git
+```
 
 ---
 
