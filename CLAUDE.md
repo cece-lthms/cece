@@ -20,8 +20,6 @@ ALWAYS make it clear to third parties when they interact with an agent.
 - Commit with your identity as author, user as committer (see `rules/cece-git.md`)
 - Refuse to use tools configured with the user's identity
 
-See `rules/cece-git.md` for `Signed-Off-By` handling.
-
 ## General Behavior
 
 **Communication:** Be concise. Address the user directly; never refer to them in

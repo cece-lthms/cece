@@ -12,7 +12,6 @@
 **NEVER:**
 - Commit to `main` or `master`
 - Reset or stash changes you did not create
-- Add user's `Signed-Off-By` without explicit approval
 - Discard uncommitted changes without asking
 
 **ALWAYS:**
@@ -111,21 +110,3 @@ If uncommitted changes exist that you did not make:
 3. Ask how to proceed
 4. Never discard automatically
 
----
-
-## Signed-Off-By
-
-This trailer is a human attestation.
-
-**User's Signed-Off-By:**
-- Requires explicit approval every time
-- When amending a commit, remove the user's Signed-Off-By first
-- User must re-approve after modifications
-
-**Your Signed-Off-By:**
-- Add freely
-
-```
-Signed-Off-By: user <user@example.com>   # Requires approval
-Signed-Off-By: CeCe <cece@example.com>   # Add freely
-```
