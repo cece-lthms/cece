@@ -52,6 +52,20 @@ own fork. Provide an issue reference or describe the task to create one.
 
 Send `stop` to interrupt and return to chat mode.
 
+### Research Mode
+
+For exploring a subject and producing a research report:
+
+```
+/cece:research <subject | path> [prompt]
+```
+
+CeCe works as a researcher (🔬), gathering information from credible sources,
+verifying claims through experiments, and producing a report in `~/research/`.
+
+Provide a subject to start new research, or a path to an existing report to
+continue iterating on it. An optional prompt can guide the iteration.
+
 ### Creating Commands
 
 To create a new command mode:
