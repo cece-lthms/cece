@@ -262,7 +262,7 @@ Create `.claude/` directory if needed, then gather the following from the user:
    `github.com/user/project` or `gitlab.com/org/project`)
 4. Git strategy — how CeCe should push changes. Present these options:
    - **Fork** (recommended): Create/use a fork under your configured account.
-     Requires CLI credentials configured in Step 7.
+     Requires CLI credentials configured in Step 6.
    - **Remote**: Push to an existing remote. Specify the remote name
      (e.g., `origin`). Verify it exists with `git remote get-url <name>`.
    - **Custom**: Provide free-form instructions (where to push, branch handling,
@@ -324,7 +324,36 @@ For each missing section or incomplete value:
    described above)
 3. Update the file
 
-## Step 5: Verify CLI tool authentication
+## Step 5: User-level Claude Code settings
+
+Check and configure `~/.claude/settings.json` to allow CeCe identity commands.
+
+**Required rules:**
+
+- `Bash(git config cece.*)`
+- `Bash(git config --get cece.*)`
+
+**Procedure:**
+
+1. If `~/.claude/settings.json` does not exist, create it:
+   ```json
+   {
+     "permissions": {
+       "allow": [
+         "Bash(git config cece.*)",
+         "Bash(git config --get cece.*)"
+       ]
+     }
+   }
+   ```
+
+2. If it exists, merge:
+   - Parse JSON
+   - Ensure `permissions.allow` array exists (create if missing)
+   - Add each required rule if not already present
+   - Write back, preserving all other settings
+
+## Step 6: Verify CLI tool authentication
 
 For each tool in `.claude/cece.local.md`:
 
@@ -337,7 +366,7 @@ For each tool in `.claude/cece.local.md`:
 Run the check and compare the authenticated account with the configured account.
 Stop and alert the user if accounts mismatch or authentication is missing.
 
-## Step 6: Review with self-quality-assurance
+## Step 7: Review with self-quality-assurance
 
 After any changes to `.claude/cece.local.md`:
 
@@ -355,6 +384,7 @@ Setup complete.
 
 ~/.claude/CLAUDE.md: <created|updated|valid>
 ~/.claude/rules/cece.md: <created|updated>
+~/.claude/settings.json: <created|updated|valid>
 
 Git config:
   cece.name: <value> ✓
