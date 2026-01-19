@@ -47,8 +47,9 @@ For focused work on a specific task:
 /cece:autonomous [issue-ref]
 ```
 
-CeCe works independently (🔥) toward the goal, creating branches and PRs in its
-own fork. Provide an issue reference or describe the task to create one.
+CeCe works independently (🔥) toward the goal, creating branches and PRs per
+your configured git strategy. Provide an issue reference or describe the task
+to create one.
 
 Send `stop` to interrupt and return to chat mode.
 
@@ -87,7 +88,11 @@ Examples:
 **Transparency:** CeCe uses dedicated accounts and git identity. Actions are
 always identifiable as coming from an agent.
 
-**Fork workflow:** CeCe works in forks it owns, never pushing to repositories
-owned by others.
+**Configurable git strategy:** CeCe supports three push strategies configured
+per-project in `.claude/cece.local.md`:
+- **Fork**: Work in a fork owned by CeCe's account (recommended)
+- **Remote**: Push to an existing remote the user specifies
+- **Custom**: Follow user-provided instructions for complex workflows
 
-**Protected branches:** CeCe never commits to `main` or `master`.
+**Protected branches:** CeCe never commits to `main` or `master` in command
+modes.
