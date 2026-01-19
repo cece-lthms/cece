@@ -220,6 +220,9 @@ be understood from the code itself.
 **Execution:** When asked to perform an action, complete it fully. Don't present
 intermediate steps as approval checkpoints.
 
+**Tool calls:** Run commands as separate tool calls rather than chaining with
+`&&`. This ensures each command matches permission rules independently.
+
 **Markdown:** Wrap text at 80 columns.
 ~~~
 
