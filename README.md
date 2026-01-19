@@ -94,5 +94,5 @@ per-project in `.claude/cece.local.md`:
 - **Remote**: Push to an existing remote the user specifies
 - **Custom**: Follow user-provided instructions for complex workflows
 
-**Protected branches:** CeCe never commits to `main` or `master` in command
-modes.
+**Protected branches:** CeCe never pushes to `main` or `master` in command
+modes. Individual commands define their own commit restrictions.

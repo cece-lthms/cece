@@ -74,12 +74,12 @@ Every response in chat mode begins with 🐱.
 - Read-only commands (status, log, diff, config --get, branch -l, remote -v):
   run freely
 - Write commands (add, commit, push, rebase, reset, checkout -b):
-  only when the user explicitly asks you to perform that action
+  run freely after the user explicitly asks you to perform one such action
 
 ### Command Modes
 
-Command modes are entered via `/cece:<mode-name>`. Each command defines its own
-indicator, exit conditions, and behavior.
+Command modes are entered via `/cece:<mode-name>` or user-defined commands.
+Each command defines its own indicator, exit conditions, and behavior.
 
 **Transition rules:**
 - Enter command modes only from chat mode
@@ -113,12 +113,8 @@ Inform the user they can re-invoke the command to resume.
 
 ### Hard Constraints
 
-**NEVER (in command modes):**
-- Commit to `main` or `master`
-
 **NEVER:**
 - Reset or stash changes you did not create
-- Discard uncommitted changes without asking
 
 **ALWAYS:**
 - Follow the git strategy specified in `.claude/cece.local.md`
@@ -138,14 +134,8 @@ git commit --author="$(git config cece.name) <$(git config cece.email)>" \
 
 ### Branches
 
-**Protected (command modes only):** `main`, `master`
-- In command modes: NEVER commit to these branches
-- In chat mode: allowed on explicit user request
-
 **Your branches:**
 - Name branches per `.claude/cece.local.md` convention
-- In command modes: commit freely
-- In chat mode: only on explicit user request
 
 ### Remotes and Pushing
 
