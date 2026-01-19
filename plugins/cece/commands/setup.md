@@ -121,10 +121,11 @@ Inform the user they can re-invoke the command to resume.
 - Discard uncommitted changes without asking
 
 **ALWAYS:**
-- Work in a fork owned by your configured account (from `.claude/cece.local.md`)
+- Follow the git strategy specified in `.claude/cece.local.md`
 - Use your configured identity as author for every commit
 - Follow branch naming from `.claude/cece.local.md`
-- Check for uncommitted changes before any git operation; alert the user if changes exist that you did not make
+- Check for uncommitted changes before any git operation; alert the user if
+  changes exist that you did not make
 
 ### Commit Identity
 
@@ -146,36 +147,23 @@ git commit --author="$(git config cece.name) <$(git config cece.email)>" \
 - In command modes: commit freely
 - In chat mode: only on explicit user request
 
-### Remotes and Forks
+### Remotes and Pushing
 
-**ALWAYS:**
-- Work in a fork owned by your configured account (specified in `.claude/cece.local.md` as `gh: <account>`)
+The git strategy is configured in `.claude/cece.local.md` under `## Git Strategy`.
+Read that section to determine how to push changes.
 
-**NEVER:**
-- Push to repositories you do not own
+**Strategy types:**
 
-**Setup:**
-1. Fork the repository to your configured account
-2. Add your fork as a remote named `cece`
-3. Set your branch to track your fork, not upstream
+- **fork**: Create/use a fork under your configured account. Add as remote named
+  `cece`. Push to `cece` remote.
+- **remote**: Push to the specified existing remote (e.g., `origin`).
+- **custom**: Follow the free-form instructions provided.
 
-```bash
-# Fork and add as remote
-gh repo fork --remote-name=cece
+**Hard constraints (all strategies):**
 
-# Or manually
-git remote add cece https://github.com/your-account/repo.git
-
-# Always push to your fork
-git push cece branch-name
-```
-
-**Verification:**
-Before pushing, verify your remote points to your fork:
-```bash
-git remote get-url cece
-# Should show: https://github.com/your-account/repo.git
-```
+- NEVER push to a remote you are not authorized to use
+- NEVER push to `main` or `master` branches (in command modes)
+- ALWAYS verify the remote before pushing
 
 ### Commit History
 
@@ -275,11 +263,19 @@ Create `.claude/` directory if needed, then gather the following from the user:
 2. Commit message style (e.g., conventional commits, imperative mood)
 3. Upstream repository (full URL or `owner/repo`, e.g.,
    `github.com/user/project` or `gitlab.com/org/project`)
-4. Issue tracker location (full URL or `owner/repo` on the platform, e.g.,
+4. Git strategy — how CeCe should push changes. Present these options:
+   - **Fork** (recommended): Create/use a fork under your configured account.
+     Requires CLI credentials configured in Step 7.
+   - **Remote**: Push to an existing remote. Specify the remote name
+     (e.g., `origin`). Verify it exists with `git remote get-url <name>`.
+   - **Custom**: Provide free-form instructions (where to push, branch handling,
+     authentication).
+5. Issue tracker location (full URL or `owner/repo` on the platform, e.g.,
    `github.com/user/project`, `gitlab.com/org/project`, `linear.app/team/project`,
    or None)
-5. PR template or required sections (path or description, or None)
-6. CLI tools and account for each (e.g., `gh: cece-bot`)
+6. PR template or required sections (path or description, or None)
+7. CLI tools and account for each (e.g., `gh: cece-bot`) — required if git
+   strategy is "Fork"
 
 Generate `.claude/cece.local.md`:
 
@@ -291,6 +287,21 @@ Generate `.claude/cece.local.md`:
 Branch naming: <answer>
 Commit style: <answer>
 Upstream: <answer>
+
+## Git Strategy
+
+Strategy: <fork|remote|custom>
+
+<!-- Include ONE of the following based on strategy -->
+
+<!-- fork: -->
+Account: <tool>: <account>
+
+<!-- remote: -->
+Remote: <remote-name>
+
+<!-- custom: -->
+<Describe workflow: where to push, branch handling, auth method>
 
 ## Project Management
 
@@ -306,12 +317,14 @@ PR template: <answer>
 
 Read the file and check for:
 - `## Git` section with branch naming, commit style, and upstream
+- `## Git Strategy` section with strategy type (fork, remote, or custom)
 - `## Project Management` section with issue tracker
 - `## CLI Tools & Accounts` section
 
 For each missing section or incomplete value:
 1. List what is missing
-2. Gather the missing values from the user
+2. Gather the missing values from the user (present git strategy options as
+   described above)
 3. Update the file
 
 ## Step 5: Verify CLI tool authentication

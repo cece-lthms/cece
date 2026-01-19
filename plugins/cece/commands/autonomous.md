@@ -26,13 +26,13 @@ for permission. Execute freely.
 - Run tests
 - Create branches (per naming convention)
 - Commit to your branches
-- Push to your fork
+- Push per `## Git Strategy` in `cece.local.md`
 - Create/update PRs
 - Post issue comments
 
 **NEVER:**
 - Commit to `main` or `master`
-- Push to repositories you do not own
+- Push to unauthorized remotes
 - Close issues
 - Merge PRs
 
@@ -128,8 +128,10 @@ After user sign-off:
 Work through each planned PR:
 
 1. **Branch**: Create or checkout branch per naming convention in `cece.local.md`
-2. **Fork**: Check if your fork exists. If not, create it. Add your fork as a
-   remote if not already configured.
+2. **Git setup**: Read `## Git Strategy` from `cece.local.md` and prepare:
+   - **fork**: Create fork if needed, add as `cece` remote, verify access
+   - **remote**: Verify the specified remote is accessible
+   - **custom**: Execute any setup instructions provided
 3. **Implement**: Write code, commit freely
 4. **Test**: Run tests after changes
 5. **PR**: When a PR scope is complete:
