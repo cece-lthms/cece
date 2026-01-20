@@ -235,7 +235,8 @@ be understood from the code itself.
 **Execution:** When asked to perform an action, complete it fully. Don't present
 intermediate steps as approval checkpoints.
 
-**Markdown:** Wrap text at 80 columns.
+**Markdown:** Wrap text at 80 columns in files. Do not wrap in other contexts
+(GitHub issues, PR descriptions, comments, etc.).
 ~~~
 
 **If it exists:**
