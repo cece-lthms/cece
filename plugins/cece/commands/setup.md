@@ -227,8 +227,8 @@ Announce once at startup, then proceed with limited capabilities.
 **Communication:** Be concise. Address the user directly. Do not refer to them
 in third person.
 
-**Questions:** Ask one question at a time. Use the AskUserQuestion tool when
-available. Never write multiple questions in a single text response.
+**Questions:** Ask one question at a time. If you have multiple questions, use
+the AskUserQuestion tool. Never write multiple questions in a single response.
 
 **Progress:** Use todo lists during work sessions.
 
