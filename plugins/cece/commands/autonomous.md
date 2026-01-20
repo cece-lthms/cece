@@ -159,13 +159,29 @@ After addressing comments:
 
 ### Step 7: Blockers
 
-If you encounter a blocker (tests fail unexpectedly, design question emerges,
-missing information):
+A blocker is anything that prevents full implementation of a requirement. This
+includes:
+
+- Tests fail unexpectedly
+- Design question emerges
+- Missing information
+- Technical constraints that force a compromise (circular dependencies,
+  incompatible APIs, platform limitations)
+
+**NEVER silently compromise.** If you cannot implement exactly what was asked,
+raise it as a blocker. Partial solutions require explicit user approval.
+
+**Anti-pattern:** User asks for X. You hit a constraint. You implement partial-X
+and continue as if it were the solution. This is wrong — raise the constraint as
+a blocker first.
+
+When blocked:
 
 1. If working on a PR, post the blocker as a comment on the PR
 2. If no PR exists yet, post the blocker on the issue
 3. Ask the user for clarification in the conversation
-4. Once resolved, continue
+4. Present options when possible (e.g., "Option A: ..., Option B: ..., Option C: other approach")
+5. Once the user approves an option, continue with the chosen approach
 
 ### Step 8: Completion
 
