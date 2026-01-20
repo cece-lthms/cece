@@ -39,19 +39,54 @@ This creates `.claude/cece.local.md` with project-specific configuration
 CeCe starts in chat mode (🐱). You drive, CeCe assists. Ask questions, discuss
 approaches, implement together.
 
-### Autonomous Mode
+### Do Mode
 
-For focused work on a specific task:
+For quick, autonomous task execution:
 
 ```
-/cece:autonomous [issue-ref]
+/cece:do <prompt>
 ```
 
-CeCe works independently (🔥) toward the goal, creating branches and PRs per
-your configured git strategy. Provide an issue reference or describe the task
-to create one.
+CeCe executes the task immediately (⚡), working autonomously without
+intermediate checkpoints. Use this for self-contained tasks that don't need
+issue tracking.
 
 Send `stop` to interrupt and return to chat mode.
+
+### Plan and Progress Modes
+
+For issue-driven work with structured planning:
+
+```
+/cece:plan [issue-ref]
+/cece:progress <issue-ref>
+```
+
+**Plan mode** (📋) helps you collaboratively design an implementation approach
+before writing code. CeCe explores the codebase, drafts a work plan with success
+criteria, and posts it to the issue after you approve.
+
+**Progress mode** (🔥) executes the plan independently, creating branches and
+PRs per your configured git strategy. It tracks progress on the issue and
+handles reviews.
+
+This two-phase workflow separates planning from execution, giving you control
+over the approach before CeCe starts implementing.
+
+Send `stop` to interrupt either mode and return to chat mode.
+
+### Quick Fix
+
+For addressing trivial PR review comments:
+
+```
+/cece:quick-fix <pr-ref>
+```
+
+CeCe classifies review comments (🪄) as trivial or non-trivial. Typos, explicit
+formatting fixes, and exact rename requests are addressed immediately. Logic
+changes, ambiguous suggestions, and multi-file requests are deferred for your
+attention.
 
 ### Research Mode
 
