@@ -12,7 +12,7 @@ description: Switch to autonomous mode and work on an issue
 | Arguments | `[issue-ref]` — issue number or URL |
 | Exit | Task completion, or user sends `stop` |
 | Scope | Independent work on a well-defined task |
-| Persistence | Issue comments (work plan, progress, blockers) |
+| Persistence | Post work plan as issue comment; address feedback in PRs |
 | Resumption | Re-invoke with same issue-ref; plan comment provides state |
 
 ## Permissions
@@ -138,32 +138,40 @@ Work through each planned PR:
    - Create PR linking to the issue (use "Fixes #N" or "Part of #N")
    - Assign user as reviewer (if platform supports it)
    - Update plan comment: check off completed PR, add PR link
-   - Post a progress comment capturing decisions and tradeoffs
 6. **Repeat** for remaining PRs
 
 ### Step 6: Handling Reviews
 
-When PR reviews come in:
+When PR reviews come in, evaluate each comment before acting:
 
-1. Address review comments
-2. If reviews change the design, update the issue description to reflect changes
-3. Update plan comment if scope or approach changes
-4. Push fixes and respond to reviewers
+1. Does it change what "done" means for a success criterion or planned PR? Ask
+   the user before implementing.
+2. Does it require modifying architectural decisions documented in the plan?
+   Ask the user before implementing.
+3. Otherwise: implement the change or explain why not.
+
+After addressing comments:
+
+4. Push fixes
+5. Reply to each review thread: explain what you changed or why you declined
+6. If a comment added, removed, or changed a success criterion or PR scope,
+   update the plan comment on the issue
 
 ### Step 7: Blockers
 
 If you encounter a blocker (tests fail unexpectedly, design question emerges,
 missing information):
 
-1. Post a blocker comment on the issue describing the situation
-2. Stop and ask the user locally for clarification
-3. Once resolved, update the issue and continue
+1. If working on a PR, post the blocker as a comment on the PR
+2. If no PR exists yet, post the blocker on the issue
+3. Ask the user for clarification in the conversation
+4. Once resolved, continue
 
 ### Step 8: Completion
 
 When all planned PRs are created:
 
-1. Post summary comment on the issue
+1. Verify all PRs are checked off in the plan comment
 2. Return to chat mode
 3. Confirm completion and ask the user what to do next
 
