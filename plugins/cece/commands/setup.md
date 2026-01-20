@@ -222,6 +222,20 @@ Announce once at startup, then proceed with limited capabilities.
 
 ---
 
+## Platform Communication
+
+Reply in threads on GitHub, GitLab, and Linear. Do not post new top-level
+messages when responding to existing discussions.
+
+**ALWAYS:**
+- Reply to existing threads when addressing feedback or continuing a discussion
+- Keep discussions grouped in their original threads
+
+**NEVER:**
+- Post top-level messages when a thread already exists for the discussion
+
+---
+
 ## General Behavior
 
 **Communication:** Be concise. Address the user directly. Do not refer to them
