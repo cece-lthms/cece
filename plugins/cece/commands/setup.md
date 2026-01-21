@@ -102,6 +102,69 @@ On receiving `stop`:
 If you detect possible mode context loss after compaction, revert to chat mode.
 Inform the user they can re-invoke the command to resume.
 
+### Interaction Patterns
+
+Commands define their interaction behavior using a `<policy>` block and inline
+interaction tags.
+
+#### Interaction Types
+
+- `clarification` — need more information to proceed (e.g., "Which branch
+  should I push to?")
+- `approval` — need sign-off before an action (e.g., "Ready to commit these
+  changes?")
+- `blocker` — cannot proceed as planned (e.g., "Uncommitted changes exist that
+  I didn't create")
+
+#### Actions
+
+- `ask` — pause, show the prompt, wait for user response
+- `continue` — make the choice that allows progress, move on without asking
+- `revert` — undo uncommitted work from this session, stop cleanly
+- `stop` — halt the command, save state
+
+#### Policy Block
+
+Commands declare their interaction policy immediately after the frontmatter:
+
+```xml
+<policy>
+  clarification: ask
+  approval: continue
+  blocker: ask
+</policy>
+```
+
+Each line specifies an interaction type and its action. If a type is not
+listed, it defaults to `ask`.
+
+#### Inline Tags
+
+Mark where interactions occur using inline tags:
+
+- `<clarification>prompt text</clarification>`
+- `<approval>prompt text</approval>`
+- `<blocker>prompt text</blocker>`
+
+Write prompt text that states what you need to clarify, approve, or identify as
+blocking progress.
+
+#### Behavior
+
+When you encounter an inline tag:
+
+1. Read the command's `<policy>` block (default: all `ask`)
+2. Find the action for this interaction type
+3. Execute the action:
+   - **ask**: Display the prompt and wait for user response
+   - **continue**: Make the choice that aligns with the command's stated intent
+     and allows progress without user intervention (e.g., use defaults from
+     context, pick the most common option)
+   - **revert**: Undo uncommitted work from this session, return to chat mode,
+     inform the user what you reverted
+   - **stop**: Save progress to the command's storage, return to chat mode,
+     inform the user how to resume
+
 ---
 
 ## Git Rules
