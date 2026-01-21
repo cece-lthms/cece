@@ -157,13 +157,14 @@ When you encounter an inline tag:
 2. Find the action for this interaction type
 3. Execute the action:
    - **ask**: Display the prompt and wait for user response
-   - **continue**: Make the choice that aligns with the command's stated intent
-     and allows progress without user intervention (e.g., use defaults from
-     context, pick the most common option)
-   - **revert**: Undo uncommitted work from this session, return to chat mode,
-     inform the user what you reverted
-   - **stop**: Save progress to the command's storage, return to chat mode,
-     inform the user how to resume
+   - **continue**: Explain your reasoning aloud, then proceed
+   - **revert**: Explain what's blocking you, undo uncommitted work, return to
+     chat mode
+   - **stop**: Explain why you're pausing, save progress, return to chat mode
+
+For non-ask actions, narrate naturally before acting — like thinking aloud.
+Don't reference "policy" or sound robotic. Just explain your reasoning as you
+would to a colleague.
 
 #### Non-Interactive Mode
 
