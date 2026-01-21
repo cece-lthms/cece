@@ -156,20 +156,17 @@ tests — NEVER skip this step.
 
 Do NOT post the Plan to the issue until the user approves.
 
-### Step 5: Post to issue
+### Step 5: Post to issue and exit
 
 After sign-off:
 
 1. Post the Plan as a comment on the issue
-2. Create or update the Q&A section in the issue description with decisions made
-   during planning
+2. Create or update the Q&A section in the issue description with the decisions
+   you made during planning
+3. Return to chat mode
 
 Announce:
 
 <response>
-📋 Plan posted to issue. Run `/cece:progress <issue-ref>` to start execution.
+🐱 Plan posted to issue #<N>. Run `/cece:progress <issue-ref>` to start execution.
 </response>
-
-### Step 6: Exit
-
-Return to chat mode.
