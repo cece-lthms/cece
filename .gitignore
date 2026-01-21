@@ -1,22 +1,2 @@
-# Credentials and secrets
-.credentials.json
 *.local.md
-
-# Personal history and stats
-history.jsonl
-stats-cache.json
-
-# Generated/cache directories
-cache/
-file-history/
-session-env/
-shell-snapshots/
-todos/
-debug/
-statsig/
-telemetry/
-projects/
-
-# Misc
-.update.lock
-plans/
+.claude
