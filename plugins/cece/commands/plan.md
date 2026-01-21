@@ -2,6 +2,12 @@
 description: Plan work on an issue with concrete PRs and test strategy
 ---
 
+<policy>
+  clarification: ask
+  approval: ask
+  blocker: ask
+</policy>
+
 # Plan Mode
 
 ## Mode Properties

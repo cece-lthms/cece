@@ -190,8 +190,8 @@ Use AskUserQuestion:
 Store as `{blocker_action}`.
 
 **Build the policy block:**
-- If all three actions are "ask": omit the `<policy>` block entirely
-- Otherwise: include only the lines that differ from "ask"
+
+Always include the `<policy>` block with all three interaction types.
 
 ### Step 11: Workflow
 
@@ -236,24 +236,13 @@ Example: User writes "Help me debug code" →
 
 **Policy block:**
 
-Include the `<policy>` block only if at least one action differs from "ask".
-If all actions are "ask", omit the entire block.
-Include only lines that differ from the default ("ask").
-
-Example — if only blocker differs (clarification and approval are "ask"):
+Always include the `<policy>` block with all three interaction types:
 
 ```xml
 <policy>
-  blocker: revert
-</policy>
-```
-
-Example — if multiple actions differ:
-
-```xml
-<policy>
-  approval: continue
-  blocker: revert
+  clarification: {clarification_action}
+  approval: {approval_action}
+  blocker: {blocker_action}
 </policy>
 ```
 
@@ -268,48 +257,7 @@ interaction happens:
 Not all steps need tags — only those where an interaction pattern applies.
 The prompt inside each tag describes what the command needs at that point.
 
-**Template without policy block** (all actions are "ask"):
-
-~~~markdown
----
-description: {scope}
----
-
-# {name (title case)}
-
-## Mode Properties
-
-| Property | Value |
-|----------|-------|
-| Indicator | {indicator} |
-| Arguments | {arguments} |
-| Exit | {exit} |
-| Scope | {scope rewritten from CeCe's perspective} |
-| Persistence | {persistence} |
-| Resumption | {resumption} |
-
-## Permissions
-
-**Allowed:**
-{allowed as bullet list}
-
-**Forbidden:**
-{forbidden as bullet list}
-
----
-
-## Workflow
-
-Announce:
-
-<response>
-{indicator} Switching to {name} mode.
-</response>
-
-{workflow as numbered steps, each with a ### header}
-~~~
-
-**Template with policy block** (at least one action differs from "ask"):
+**Template:**
 
 ~~~markdown
 ---
@@ -317,7 +265,9 @@ description: {scope}
 ---
 
 <policy>
-  {lines for actions that differ from "ask"}
+  clarification: {clarification_action}
+  approval: {approval_action}
+  blocker: {blocker_action}
 </policy>
 
 # {name (title case)}

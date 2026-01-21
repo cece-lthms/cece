@@ -2,6 +2,12 @@
 description: Brainstorm and settle on an implementation approach
 ---
 
+<policy>
+  clarification: ask
+  approval: ask
+  blocker: ask
+</policy>
+
 # Design Mode
 
 ## Mode Properties

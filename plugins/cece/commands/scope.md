@@ -2,6 +2,12 @@
 description: Create or refine an issue before planning
 ---
 
+<policy>
+  clarification: ask
+  approval: ask
+  blocker: ask
+</policy>
+
 # Scope Mode
 
 ## Mode Properties

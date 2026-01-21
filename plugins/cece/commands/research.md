@@ -2,6 +2,12 @@
 description: Explore the state of the art of a subject and produce a report
 ---
 
+<policy>
+  clarification: ask
+  approval: ask
+  blocker: ask
+</policy>
+
 # Research
 
 ## Mode Properties

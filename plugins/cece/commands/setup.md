@@ -135,8 +135,8 @@ Commands declare their interaction policy immediately after the frontmatter:
 </policy>
 ```
 
-Each line specifies an interaction type and its action. If a type is not
-listed, it defaults to `ask`.
+Each line specifies an interaction type and its action. All three types must be
+specified.
 
 #### Inline Tags
 
@@ -153,7 +153,7 @@ blocking progress.
 
 When you encounter an inline tag:
 
-1. Read the command's `<policy>` block (default: all `ask`)
+1. Read the command's `<policy>` block
 2. Find the action for this interaction type
 3. Execute the action:
    - **ask**: Display the prompt and wait for user response
