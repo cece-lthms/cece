@@ -146,10 +146,57 @@ Ask: "What actions should be forbidden?"
 
 Store as `{forbidden}`.
 
-### Step 10: Workflow
+### Step 10: Interaction patterns
 
-Ask: "Describe what this command should do, step by step. Write freely — I'll
-structure it afterward."
+Ask the user how the command should respond to each interaction type:
+
+- **Clarification**: The command needs missing information before it can continue.
+- **Approval**: The command must pause before a significant action (creating files,
+  pushing code, deleting data).
+- **Blocker**: Something goes wrong (error, constraint) and the command cannot
+  proceed as planned.
+
+Use AskUserQuestion:
+- Question: "What should this command do when it needs more information before
+  proceeding?"
+- Options:
+  - Ask (default) — pause and ask
+  - Continue — proceed without asking
+  - Revert — undo work and stop cleanly
+  - Stop — halt and save state
+
+Store as `{clarification_action}`.
+
+Use AskUserQuestion:
+- Question: "What should this command do when it must get your approval before
+  continuing?"
+- Options:
+  - Ask (default) — pause and ask
+  - Continue — proceed without asking
+  - Revert — undo work and stop cleanly
+  - Stop — halt and save state
+
+Store as `{approval_action}`.
+
+Use AskUserQuestion:
+- Question: "What should this command do when it encounters an error or cannot
+  proceed?"
+- Options:
+  - Ask (default) — pause and ask
+  - Continue — proceed without asking
+  - Revert — undo work and stop cleanly
+  - Stop — halt and save state
+
+Store as `{blocker_action}`.
+
+**Build the policy block:**
+- If all three actions are "ask": omit the `<policy>` block entirely
+- Otherwise: include only the lines that differ from "ask"
+
+### Step 11: Workflow
+
+Ask: "Describe what this command should do in sequence. Include enough detail
+that I can turn it into numbered steps."
 
 Take the user's free-form description and structure it into numbered steps.
 
@@ -171,19 +218,57 @@ If user gives feedback: adjust the structure, present again.
 
 Repeat until user accepts.
 
-### Step 11: Generate
+### Step 12: Generate
 
 Generate the command file.
 
-**Perspective transformation:** The user provided `{scope}` from their perspective.
-- Use `{scope}` as-is for the frontmatter description (user-facing)
-- Rewrite `{scope}` from CeCe's perspective for the Mode Properties scope
+**Perspective transformation:**
 
-Example: User writes "Help me debug code" → description stays "Help me debug
-code", scope becomes "Assist the user in debugging code by analyzing errors and
-suggesting fixes".
+The frontmatter description uses the original user-focused scope.
+The Mode Properties Scope field uses a rewritten CeCe-perspective scope.
 
-Use this template:
+- User-focused: "What will this help me do?"
+- CeCe-perspective: "What will I do when you invoke this command?"
+
+Example: User writes "Help me debug code" →
+- Frontmatter description: "Help me debug code" (unchanged)
+- Mode Properties Scope: "Debug code by analyzing errors and suggesting fixes"
+
+**Policy block:**
+
+Include the `<policy>` block only if at least one action differs from "ask".
+If all actions are "ask", omit the entire block.
+Include only lines that differ from the default ("ask").
+
+Example — if only blocker differs (clarification and approval are "ask"):
+
+```xml
+<policy>
+  blocker: revert
+</policy>
+```
+
+Example — if multiple actions differ:
+
+```xml
+<policy>
+  approval: continue
+  blocker: revert
+</policy>
+```
+
+**Inline interaction tags:**
+
+Insert inline interaction tags into workflow steps at the exact point where the
+interaction happens:
+- `<clarification>prompt</clarification>` — where the command needs info
+- `<approval>prompt</approval>` — before significant actions
+- `<blocker>prompt</blocker>` — where errors might occur
+
+Not all steps need tags — only those where an interaction pattern applies.
+The prompt inside each tag describes what the command needs at that point.
+
+**Template without policy block** (all actions are "ask"):
 
 ~~~markdown
 ---
@@ -221,10 +306,57 @@ Announce:
 {indicator} Switching to {name} mode.
 </response>
 
-{workflow as numbered steps with ### headers}
+{workflow as numbered steps, each with a ### header}
 ~~~
 
-### Step 12: Review
+**Template with policy block** (at least one action differs from "ask"):
+
+~~~markdown
+---
+description: {scope}
+---
+
+<policy>
+  {lines for actions that differ from "ask"}
+</policy>
+
+# {name (title case)}
+
+## Mode Properties
+
+| Property | Value |
+|----------|-------|
+| Indicator | {indicator} |
+| Arguments | {arguments} |
+| Exit | {exit} |
+| Scope | {scope rewritten from CeCe's perspective} |
+| Persistence | {persistence} |
+| Resumption | {resumption} |
+
+## Permissions
+
+**Allowed:**
+{allowed as bullet list}
+
+**Forbidden:**
+{forbidden as bullet list}
+
+---
+
+## Workflow
+
+Announce:
+
+<response>
+{indicator} Switching to {name} mode.
+</response>
+
+{workflow as numbered steps, each with a ### header}
+~~~
+
+Replace `{indicator}` with the actual emoji character chosen in Step 4.
+
+### Step 13: Review
 
 Run `self-quality-assurance` on the generated content.
 
@@ -232,7 +364,7 @@ Apply all fixes that do not alter the user's intended meaning.
 
 For fixes that would change meaning, ask the user before applying.
 
-### Step 13: Write
+### Step 14: Write
 
 Create the directory if needed:
 - Project: `.claude/commands/`
@@ -240,7 +372,7 @@ Create the directory if needed:
 
 Write the file as `{name}.md`.
 
-### Step 14: Confirm
+### Step 15: Confirm
 
 Announce:
 
