@@ -184,10 +184,11 @@ Return to chat mode.
 Work through each planned PR:
 
 1. **Branch**: Create or checkout branch per naming convention in `.claude/cece.local.md`
-2. **Freshness check** (existing branches only, skip for new branches):
+2. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
+3. **Freshness check** (existing branches only, skip for new branches):
    a. Run `git fetch origin main`
    b. Run `git merge-base --is-ancestor origin/main HEAD`
-   c. If exit code is 0: branch is up to date — proceed to step 3
+   c. If exit code is 0: branch is up to date — proceed to step 4
    d. If exit code is 1: rebase the branch onto main:
       - Run `git rebase origin/main`
       - If conflicts occur: edit affected files to resolve, then run
@@ -196,7 +197,6 @@ Work through each planned PR:
         branch with main — which files conflict and how should I
         resolve?</blocker>
       - Force-push per `## Git Strategy` in `.claude/cece.local.md`
-3. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
 4. **Implement**: Write code to implement the planned PR, committing as you progress
 5. **Test**: Execute the test plan. If tests fail, fix before proceeding.
    - If test plan says "User approved: no tests", skip testing for this PR
