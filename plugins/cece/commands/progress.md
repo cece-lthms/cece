@@ -185,22 +185,44 @@ Work through each planned PR:
 
 1. **Branch**: Create or checkout branch per naming convention in `.claude/cece.local.md`
 2. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
-3. **Implement**: Write code to implement the planned PR, committing as you progress
-4. **Test**: Execute the test plan. If tests fail, fix before proceeding.
+3. **Upstream info**: Spawn the `git-upstream-info` agent. It returns `upstream_remote`
+   and `default_branch`. Use these values in steps 4, 8, and when creating PRs.
+   If the agent returns an error, raise a <blocker>I couldn't determine the
+   target of the PR — [agent error message]</blocker>
+4. **Freshness check** (existing branches only, skip for new branches):
+   a. Determine the base ref for this PR:
+      - If this PR has a dependency (marked with `(depends on PR N)` in the Plan),
+        check if the base PR is merged. If merged, use `<upstream_remote>/<default_branch>`.
+        If not merged, use the base PR's branch.
+      - If this PR has no dependency, use `<upstream_remote>/<default_branch>`.
+   b. Fetch the base ref: `git fetch <upstream_remote> <ref>`
+   c. Check if branch includes all base ref changes:
+      `git merge-base --is-ancestor <base-ref> HEAD`
+   d. If exit code is 0: branch is up to date — proceed to step 5
+   e. If exit code is 1: branch is behind or diverged — rebase onto the base ref:
+      - Run `git rebase <base-ref>`
+      - If conflicts occur: edit affected files to resolve, then run
+        `git rebase --continue`. If conflicts persist after retry, run
+        `git rebase --abort` and raise a <blocker>Rebase conflict when syncing
+        branch with base — which files conflict and how should I
+        resolve?</blocker>
+      - Force-push the rebased branch per `## Git Strategy` in `.claude/cece.local.md`
+5. **Implement**: Write code to implement the planned PR, committing as you progress
+6. **Test**: Execute the test plan. If tests fail, fix before proceeding.
    - If test plan says "User approved: no tests", skip testing for this PR
    - If test plan cannot be executed for other reasons, raise as blocker
-5. **PR**: When PR scope is complete:
+7. **PR**: When PR scope is complete:
    - **Gate**: Before creating the PR, confirm which Definition of Done items this
      PR implements. Verify the PR fully implements those items. If incomplete,
      either complete the missing work, split across multiple PRs, or raise a
      blocker if a constraint prevents completion.
-   - Create PR linking to the issue ("Fixes #N" or "Part of #N")
+   - Create PR targeting `<default_branch>`, linking to the issue ("Fixes #N" or "Part of #N")
    - Assign user as reviewer
    - Update Plan comment: check off completed PR, add link
-6. **Rebase dependents**: If this PR has dependent branches (marked with
+8. **Rebase dependents**: If this PR has dependent branches (marked with
    `(depends on PR N)` in the Plan), rebase them onto this branch after pushing.
    See "Auto-rebase procedure" below.
-7. **Repeat** for remaining PRs
+9. **Repeat** for remaining PRs
 
 ### Step 4: Handling Reviews
 
@@ -217,15 +239,15 @@ before declining.
 
 After addressing comments:
 
-4. Push fixes to your branch per `## Git Strategy` in `.claude/cece.local.md`
-5. **Rebase dependents**: If this PR has dependent branches (marked with
+5. Push fixes to your branch per `## Git Strategy` in `.claude/cece.local.md`
+6. **Rebase dependents**: If this PR has dependent branches (marked with
    `(depends on PR N)` in the Plan), rebase them onto this branch after pushing
    your fixes. See "Auto-rebase procedure" below.
-6. In each thread, explain what you changed or why you declined the feedback (with user approval)
-7. Update the Plan comment if PR scope changed based on review
-8. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
-9. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
-   user to run `/cece:design`
+7. In each thread, explain what you changed or why you declined the feedback (with user approval)
+8. Update the Plan comment if PR scope changed based on review
+9. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
+10. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
+    user to run `/cece:design`
 
 ### Auto-rebase procedure
 
@@ -247,7 +269,8 @@ When your branch changes and has dependents listed in the Plan comment:
 
 **When a base PR is merged:** Before rebasing a dependent branch, check the merge
 state of its base PR (query via `gh pr view` or equivalent). If the base PR is
-merged, rebase the dependent branch onto main instead of the base branch.
+merged, rebase the dependent branch onto `<upstream_remote>/<default_branch>`
+(from step 3) instead of the base branch.
 
 Only rebase branches that match the naming convention in `.claude/cece.local.md`
 and are listed as dependents in the Plan comment.
