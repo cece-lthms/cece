@@ -1,5 +1,5 @@
 ---
-name: upstream-info
+name: git-upstream-info
 description: Determines the upstream remote name and default branch from git configuration. Use when you need to know which remote/branch to rebase onto or target PRs against.
 tools: Bash, Read
 model: haiku
