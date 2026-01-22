@@ -197,7 +197,10 @@ Work through each planned PR:
    - Create PR linking to the issue ("Fixes #N" or "Part of #N")
    - Assign user as reviewer
    - Update Plan comment: check off completed PR, add link
-6. **Repeat** for remaining PRs
+6. **Rebase dependents**: If this PR has dependent branches (marked with
+   `(depends on PR N)` in the Plan), rebase them onto this branch after pushing.
+   See "Auto-rebase procedure" below.
+7. **Repeat** for remaining PRs
 
 ### Step 4: Handling Reviews
 
@@ -215,11 +218,39 @@ before declining.
 After addressing comments:
 
 4. Push fixes to your branch per `## Git Strategy` in `.claude/cece.local.md`
-5. In each thread, explain what you changed or why you declined the feedback (with user approval)
-6. Update the Plan comment if PR scope changed based on review
-7. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
-8. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
+5. **Rebase dependents**: If this PR has dependent branches (marked with
+   `(depends on PR N)` in the Plan), rebase them onto this branch after pushing
+   your fixes. See "Auto-rebase procedure" below.
+6. In each thread, explain what you changed or why you declined the feedback (with user approval)
+7. Update the Plan comment if PR scope changed based on review
+8. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
+9. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
    user to run `/cece:design`
+
+### Auto-rebase procedure
+
+When your branch changes and has dependents listed in the Plan comment:
+
+1. Parse the Plan comment for PRs marked with `(depends on PR N)` where N is the
+   current PR number
+2. For each dependent branch:
+   a. Checkout the dependent branch
+   b. Rebase the dependent branch onto your branch
+   c. If conflicts occur:
+      - Attempt to resolve automatically
+      - If resolution fails, retry once
+      - If still failing, abort the rebase and raise a <blocker>Rebase conflict
+        in dependent branch — which files conflict and how should I
+        resolve?</blocker>
+   d. Force-push the rebased branch per `## Git Strategy` in `.claude/cece.local.md`
+3. Return to the original branch and continue
+
+**When a base PR is merged:** Before rebasing a dependent branch, check the merge
+state of its base PR (query via `gh pr view` or equivalent). If the base PR is
+merged, rebase the dependent branch onto main instead of the base branch.
+
+Only rebase branches that match the naming convention in `.claude/cece.local.md`
+and are listed as dependents in the Plan comment.
 
 ### Step 5: Blockers
 
