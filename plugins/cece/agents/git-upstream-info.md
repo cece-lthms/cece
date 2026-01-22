@@ -34,9 +34,16 @@ default_branch: main
 
 ## Error Handling
 
-If you cannot determine the upstream remote:
-- ALWAYS default to `origin` if no remote URL matches the Upstream value
+If you cannot determine the upstream remote (no remote URL matches the Upstream value):
+
+```
+error: Could not determine upstream remote — no remote URL matches "<upstream-value>"
+```
 
 If you cannot determine the default branch:
 - Try `git remote show <remote> | grep 'HEAD branch'` as fallback
-- ALWAYS default to `main` if the fallback also fails
+- If the fallback also fails, return:
+
+```
+error: Could not determine default branch for remote "<remote-name>"
+```

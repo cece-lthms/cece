@@ -186,7 +186,9 @@ Work through each planned PR:
 1. **Branch**: Create or checkout branch per naming convention in `.claude/cece.local.md`
 2. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
 3. **Upstream info**: Spawn the `git-upstream-info` agent. It returns `upstream_remote`
-   and `default_branch`. Use these values in steps 4, 7, and when creating PRs.
+   and `default_branch`. Use these values in steps 4, 8, and when creating PRs.
+   If the agent returns an error, raise a <blocker>Could not determine upstream
+   info — [agent error message]</blocker>
 4. **Freshness check** (existing branches only, skip for new branches):
    a. Fetch the upstream default branch: `git fetch <upstream_remote> <default_branch>`
    b. Check if branch includes all upstream changes:
