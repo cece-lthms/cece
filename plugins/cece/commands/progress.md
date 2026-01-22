@@ -186,17 +186,25 @@ Work through each planned PR:
 1. **Branch**: Create or checkout branch per naming convention in `.claude/cece.local.md`
 2. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
 3. **Freshness check** (existing branches only, skip for new branches):
-   a. Run `git fetch origin main`
-   b. Run `git merge-base --is-ancestor origin/main HEAD`
-   c. If exit code is 0: branch is up to date — proceed to step 4
-   d. If exit code is 1: rebase the branch onto main:
-      - Run `git rebase origin/main`
+   a. Determine the upstream remote and default branch:
+      - Run `git remote -v` to list remotes and their URLs
+      - Identify the upstream remote by matching the URL to the `Upstream` value
+        in `.claude/cece.local.md` (typically `origin`)
+      - Run `git symbolic-ref refs/remotes/<upstream>/HEAD` to get the default
+        branch — parse the branch name from the output (e.g., output
+        `refs/remotes/origin/main` means the default branch is `main`)
+   b. Fetch the upstream default branch: `git fetch <upstream> <default-branch>`
+   c. Check if branch includes all upstream changes:
+      `git merge-base --is-ancestor <upstream>/<default-branch> HEAD`
+   d. If exit code is 0: branch includes all upstream commits — proceed to step 4
+   e. If exit code is 1: branch is behind or diverged — rebase onto the default branch:
+      - Run `git rebase <upstream>/<default-branch>`
       - If conflicts occur: edit affected files to resolve, then run
         `git rebase --continue`. If conflicts persist after retry, run
         `git rebase --abort` and raise a <blocker>Rebase conflict when syncing
-        branch with main — which files conflict and how should I
+        branch with default branch — which files conflict and how should I
         resolve?</blocker>
-      - Force-push per `## Git Strategy` in `.claude/cece.local.md`
+      - Force-push the rebased branch per `## Git Strategy` in `.claude/cece.local.md`
 4. **Implement**: Write code to implement the planned PR, committing as you progress
 5. **Test**: Execute the test plan. If tests fail, fix before proceeding.
    - If test plan says "User approved: no tests", skip testing for this PR
@@ -259,7 +267,8 @@ When your branch changes and has dependents listed in the Plan comment:
 
 **When a base PR is merged:** Before rebasing a dependent branch, check the merge
 state of its base PR (query via `gh pr view` or equivalent). If the base PR is
-merged, rebase the dependent branch onto main instead of the base branch.
+merged, rebase the dependent branch onto the upstream default branch instead of
+the base branch.
 
 Only rebase branches that match the naming convention in `.claude/cece.local.md`
 and are listed as dependents in the Plan comment.
