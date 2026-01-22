@@ -184,12 +184,24 @@ Return to chat mode.
 Work through each planned PR:
 
 1. **Branch**: Create or checkout branch per naming convention in `.claude/cece.local.md`
-2. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
-3. **Implement**: Write code to implement the planned PR, committing as you progress
-4. **Test**: Execute the test plan. If tests fail, fix before proceeding.
+2. **Freshness check** (existing branches only, skip for new branches):
+   a. Run `git fetch origin main`
+   b. Run `git merge-base --is-ancestor origin/main HEAD`
+   c. If exit code is 0: branch is up to date — proceed to step 3
+   d. If exit code is 1: rebase the branch onto main:
+      - Run `git rebase origin/main`
+      - If conflicts occur: edit affected files to resolve, then run
+        `git rebase --continue`. If conflicts persist after retry, run
+        `git rebase --abort` and raise a <blocker>Rebase conflict when syncing
+        branch with main — which files conflict and how should I
+        resolve?</blocker>
+      - Force-push per `## Git Strategy` in `.claude/cece.local.md`
+3. **Git setup**: Read `## Git Strategy` from `.claude/cece.local.md` and prepare
+4. **Implement**: Write code to implement the planned PR, committing as you progress
+5. **Test**: Execute the test plan. If tests fail, fix before proceeding.
    - If test plan says "User approved: no tests", skip testing for this PR
    - If test plan cannot be executed for other reasons, raise as blocker
-5. **PR**: When PR scope is complete:
+6. **PR**: When PR scope is complete:
    - **Gate**: Before creating the PR, confirm which Definition of Done items this
      PR implements. Verify the PR fully implements those items. If incomplete,
      either complete the missing work, split across multiple PRs, or raise a
@@ -197,10 +209,10 @@ Work through each planned PR:
    - Create PR linking to the issue ("Fixes #N" or "Part of #N")
    - Assign user as reviewer
    - Update Plan comment: check off completed PR, add link
-6. **Rebase dependents**: If this PR has dependent branches (marked with
+7. **Rebase dependents**: If this PR has dependent branches (marked with
    `(depends on PR N)` in the Plan), rebase them onto this branch after pushing.
    See "Auto-rebase procedure" below.
-7. **Repeat** for remaining PRs
+8. **Repeat** for remaining PRs
 
 ### Step 4: Handling Reviews
 
@@ -217,15 +229,15 @@ before declining.
 
 After addressing comments:
 
-4. Push fixes to your branch per `## Git Strategy` in `.claude/cece.local.md`
-5. **Rebase dependents**: If this PR has dependent branches (marked with
+5. Push fixes to your branch per `## Git Strategy` in `.claude/cece.local.md`
+6. **Rebase dependents**: If this PR has dependent branches (marked with
    `(depends on PR N)` in the Plan), rebase them onto this branch after pushing
    your fixes. See "Auto-rebase procedure" below.
-6. In each thread, explain what you changed or why you declined the feedback (with user approval)
-7. Update the Plan comment if PR scope changed based on review
-8. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
-9. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
-   user to run `/cece:design`
+7. In each thread, explain what you changed or why you declined the feedback (with user approval)
+8. Update the Plan comment if PR scope changed based on review
+9. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
+10. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
+    user to run `/cece:design`
 
 ### Auto-rebase procedure
 
