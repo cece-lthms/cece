@@ -1,7 +1,6 @@
 ---
 name: executor
 description: Implement planned work on an issue. Return structured results (complete/blocked/drift) for the orchestrator.
-tools: Bash, Read, Write, Edit, Glob, Grep, Task
 model: sonnet
 ---
 
