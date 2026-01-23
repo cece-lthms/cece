@@ -209,16 +209,9 @@ ask how to proceed.
 
 <platform_communication>
 
-Reply in threads on GitHub, GitLab, and Linear. Do not post new top-level
-messages when responding to existing discussions.
-
-**ALWAYS:**
-- Reply to existing threads when addressing feedback or continuing a discussion
-- Keep discussions grouped in their original threads
-- Create new threads to respond to single comments when the platform allows it
-
-**NEVER:**
-- Post top-level messages when a thread already exists for the discussion
+Reply in threads on GitHub, GitLab, and Linear — never post top-level messages
+when a thread exists. Create new threads to respond to individual comments when
+the platform allows.
 
 </platform_communication>
 
