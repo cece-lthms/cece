@@ -104,9 +104,10 @@ If PR does not exist (`pr_number` is null):
 3. Link to the issue in the PR body ("Part of #<issue_number>")
 
 If PR exists:
-1. If the PR has review comments or CI failures: address the feedback and fix the failures
-2. Push updates to the branch
-3. Reply to review threads explaining how you addressed the feedback
+1. Check if the base PR has been merged since the PR was created — if so, update the PR target to `<default_branch>`
+2. If the PR has review comments or CI failures: address the feedback and fix the failures
+3. Push updates to the branch
+4. Reply to review threads explaining how you addressed the feedback
 
 ### Step 6: Next PR
 
