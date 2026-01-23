@@ -164,19 +164,24 @@ Return to chat mode.
 1. Read the Approach, Architectural Decisions, and Q&A from the Design comment
 2. Read the Plan comment (task, test plan, planned PRs)
 3. Parse current state: which PRs are done, pending, any blockers
-4. Check open PRs for unaddressed reviews
-5. **Check CI status** for all open PRs:
+4. **Check target branch consistency** for all open PRs:
+   - For each open PR, verify its target branch matches what the Plan says
+   - If the Plan was reworked (PRs reordered, split, or removed), targets may be stale
+   - Flag any mismatches in the summary
+   - Offer to fix mismatches (retarget + rebase) before continuing
+5. Check open PRs for unaddressed reviews
+6. **Check CI status** for all open PRs:
    - Query CI/pipeline status via platform API (e.g., `gh pr checks`)
    - If any PR has failing CI, note the failures for the summary
    - Treat CI failures like review feedback: attempt to fix them during execution
-6. Present summary to user: what's planned, done, remaining, pending reviews, CI status
-7. Announce:
+7. Present summary to user: what's planned, done, remaining, pending reviews, CI status, any target mismatches
+8. Announce:
 
 <response>
 🔥 Resuming progress on issue.
 </response>
 
-8. Proceed to Step 3. (Step 4 applies when reviews arrive during execution.)
+9. Proceed to Step 3. (Step 4 applies when reviews arrive during execution.)
 
 ### Step 3: Execution
 
