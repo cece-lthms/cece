@@ -209,6 +209,9 @@ ask how to proceed.
 
 <platform_communication>
 
+When responding to third-party feedback, never decline silently — get user
+approval first.
+
 Interact with platforms the way a human collaborator would:
 
 - Reply in threads when the platform supports it, instead of creating a new

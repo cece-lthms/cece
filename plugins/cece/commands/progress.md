@@ -54,6 +54,7 @@ Execute freely without asking for approval once work begins.
 - Push to unauthorized remotes
 - Close issues
 - Merge PRs
+- Check off Definition of Done boxes (only the user does that)
 - Edit issue description (use `/cece:scope` for that)
 - Edit Design comment (use `/cece:design` for that)
 - Violate an Architectural Decision without raising a blocker
@@ -78,8 +79,6 @@ A `## Definition of Done` section in the issue description. Created by
 
 **Read-only:** Only `/cece:scope` modifies this section. If you discover that a
 requirement needs changing, tell the user to run `/cece:scope`.
-
-**NEVER** check off Definition of Done boxes. Only the user checks items off.
 
 ### Design Comment
 
@@ -198,23 +197,11 @@ Work through each planned PR:
    For new branches, create from `<upstream_remote>/<default_branch>`:
    `git checkout -b <branch-name> <upstream_remote>/<default_branch>`
 4. **Freshness check** (existing branches only, skip for new branches):
-   a. Determine the base ref for this PR:
-      - If this PR has a dependency (marked with `(depends on PR N)` in the Plan),
-        check if the base PR is merged. If merged, use `<upstream_remote>/<default_branch>`.
-        If not merged, use the base PR's branch.
-      - If this PR has no dependency, use `<upstream_remote>/<default_branch>`.
-   b. Fetch the base ref: `git fetch <upstream_remote> <ref>`
-   c. Check if branch includes all base ref changes:
-      `git merge-base --is-ancestor <base-ref> HEAD`
-   d. If exit code is 0: branch is up to date — proceed to substep 5 (Implement)
-   e. If exit code is 1: branch is behind or diverged — rebase onto the base ref:
-      - Run `git rebase <base-ref>`
-      - If conflicts occur: edit affected files to resolve, then run
-        `git rebase --continue`. If conflicts persist after retry, run
-        `git rebase --abort` and raise a <blocker>Rebase conflict when syncing
-        branch with base — which files conflict and how should I
-        resolve?</blocker>
-      - Force-push the rebased branch per `## Git Strategy` in `.cece/config.md`
+   - Determine the base ref: if this PR depends on another (marked in Plan),
+     use that PR's branch (or `<upstream_remote>/<default_branch>` if merged).
+     Otherwise use `<upstream_remote>/<default_branch>`.
+   - Spawn the `git-sync-branch` agent with the base ref. If it returns a
+     conflict, raise a <blocker>Rebase conflict — [agent message]</blocker>
 5. **Implement**: Write code to implement the planned PR, committing as you progress
 6. **Test**: Execute the test plan. If tests fail, fix before proceeding.
    - If test plan says "User approved: no tests", skip testing for this PR
@@ -227,9 +214,9 @@ Work through each planned PR:
    - Create PR targeting `<default_branch>`, linking to the issue ("Fixes #N" or "Part of #N")
    - Assign user as reviewer
    - Update Plan comment: check off completed PR, add link
-8. **Rebase dependents**: If this PR has dependent branches (marked with
-   `(depends on PR N)` in the Plan), rebase them onto this branch after pushing.
-   See "Auto-rebase procedure" below.
+8. **Rebase dependents**: If this PR has dependent branches (marked in Plan),
+   spawn the `git-rebase-dependents` agent. If it returns conflicts, raise a
+   <blocker>Rebase conflict in dependent — [agent message]</blocker>
 9. **Repeat** for remaining PRs
 
 ### Step 4: Handling Reviews
@@ -241,47 +228,16 @@ When PR reviews come in, evaluate each comment:
 3. Does it add work beyond the planned scope? → <clarification>This review feedback adds work beyond the planned scope — should I implement it?</clarification>
 4. Otherwise → Implement the change
 
-NEVER decline review feedback without user approval. If you believe a comment
-should not be addressed, present your reasoning to the user and request approval
-before declining.
-
 After addressing comments:
 
 5. Push fixes to your branch per `## Git Strategy` in `.cece/config.md`
-6. **Rebase dependents**: If this PR has dependent branches (marked with
-   `(depends on PR N)` in the Plan), rebase them onto this branch after pushing
-   your fixes. See "Auto-rebase procedure" below.
+6. **Rebase dependents**: If this PR has dependent branches (marked in Plan),
+   spawn the `git-rebase-dependents` agent after pushing your fixes.
 7. In each thread, explain what you changed or why you declined the feedback (with user approval)
 8. Update the Plan comment if PR scope changed based on review
 9. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
 10. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
     user to run `/cece:design`
-
-### Auto-rebase procedure
-
-When your branch changes and has dependents listed in the Plan comment:
-
-1. Parse the Plan comment for PRs marked with `(depends on PR N)` where N is the
-   current PR number
-2. For each dependent branch:
-   a. Checkout the dependent branch
-   b. Rebase the dependent branch onto your branch
-   c. If conflicts occur:
-      - Attempt to resolve automatically
-      - If resolution fails, retry once
-      - If still failing, abort the rebase and raise a <blocker>Rebase conflict
-        in dependent branch — which files conflict and how should I
-        resolve?</blocker>
-   d. Force-push the rebased branch per `## Git Strategy` in `.cece/config.md`
-3. Return to the original branch and continue
-
-**When a base PR is merged:** Before rebasing a dependent branch, check the merge
-state of its base PR (query via `gh pr view` or equivalent). If the base PR is
-merged, rebase the dependent branch onto `<upstream_remote>/<default_branch>`
-(from the git-upstream-info agent in Step 3, substep 2) instead of the base branch.
-
-Only rebase branches that match the naming convention in `.cece/config.md`
-and are listed as dependents in the Plan comment.
 
 ### Step 5: Blockers
 
@@ -291,9 +247,6 @@ A blocker is anything that prevents full implementation of a requirement:
 - Missing information
 - Technical constraints that force a compromise
 - Implementation would violate an Architectural Decision
-
-**NEVER silently compromise.** If you cannot implement exactly what was asked,
-raise it as a blocker. Partial solutions require explicit user approval.
 
 When blocked:
 
@@ -326,27 +279,12 @@ Re-run `/cece:progress <issue-ref>` to continue.
 
 When all planned PRs are created and the task is fully complete:
 
-1. **Pre-check**: Re-fetch the Definition of Done from the issue description. For
-   each item, identify the specific code and tests that implement it. Concrete
-   implementation means: the feature works in code, tests pass (unless waived),
-   and the requirement is fully addressed — not partially. If you cannot point to
-   concrete implementation, the item is not met — raise a blocker before proceeding.
-2. Verify all PRs are checked off in the Plan comment
-3. Run the full test plan to verify all PRs work together (skip if "User approved: no tests")
-4. **Review each Definition of Done item:**
-   - Confirm the implementation meets the requirement exactly
-   - If any item is not fully satisfied, raise a blocker
-   - NEVER declare completion with unmet requirements
-5. Present final summary: what was delivered, how each Definition of Done item was met
-
-Return to chat mode.
-
-Announce:
+1. Verify all PRs are checked off in the Plan comment
+2. Run the full test plan to verify all PRs work together (skip if "User approved: no tests")
+3. For each Definition of Done item, confirm the implementation meets it exactly.
+   If any item is unmet, raise a blocker — do not declare completion.
+4. Present final summary: what was delivered, how each Definition of Done item was met
 
 <response>
 🐱 All work complete for issue #<N>. [Summary of what was delivered]
 </response>
-
-**NEVER** mark Definition of Done checkboxes complete — only the user does that.
-
-NEVER close issues; closure happens automatically when PRs merge.
