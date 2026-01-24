@@ -26,7 +26,7 @@ description: Execute work on an issue with an existing plan
 **Requirements are commitments.** Once the user approves the plan, every Definition
 of Done item is a promise. NEVER drop, weaken, or partially implement a requirement
 without explicit user approval. If you cannot deliver exactly what was agreed,
-raise it as a blocker — do not silently reduce scope.
+raise it as a blocker. NEVER silently reduce scope.
 
 **Persistence over convenience.** When implementation is difficult, explore
 alternative approaches before concluding something is impossible. Only raise a
@@ -191,20 +191,35 @@ Return to chat mode.
 
 Work through each planned PR:
 
-1. **Git setup**: Read `## Git Strategy` from `.cece/config.md` and prepare
-2. **Upstream info**: Spawn the `git-upstream-info` agent. It returns `upstream_remote`
-   and `default_branch`. Use these values in substeps 3, 4, 8, and when creating PRs.
-   If the agent returns an error, raise a <blocker>I couldn't determine the
-   target of the PR — [agent error message]</blocker>
+1. **Git setup**: Read `## Git Strategy` from `.cece/config.md` to determine push remote and workflow
+2. **Upstream info**: Determine the upstream remote and default branch:
+   a. Read `Upstream` from `## Git` in `.cece/config.md` (e.g., `lthms/cece`)
+   b. Run `git remote -v` and find the remote whose URL contains the Upstream value
+   c. Run `git remote show <remote> | grep 'HEAD branch'` to get the default branch
+   d. If detection fails, raise a <blocker>Could not determine upstream remote
+      or default branch — check `.cece/config.md` and git remotes</blocker>
+   e. Use `<upstream_remote>` and `<default_branch>` in subsequent steps
 3. **Branch**: Create or checkout branch per naming convention in `.cece/config.md`.
    For new branches, create from `<upstream_remote>/<default_branch>`:
    `git checkout -b <branch-name> <upstream_remote>/<default_branch>`
 4. **Freshness check** (existing branches only, skip for new branches):
-   - Determine the base ref: if this PR depends on another (marked in Plan),
-     use that PR's branch (or `<upstream_remote>/<default_branch>` if merged).
-     Otherwise use `<upstream_remote>/<default_branch>`.
-   - Spawn the `git-sync-branch` agent with the base ref. If it returns a
-     conflict, raise a <blocker>Rebase conflict — [agent message]</blocker>
+   a. Determine the base ref for this PR:
+      - If this PR has a dependency (marked with `(depends on PR N)` in the Plan),
+        check if the base PR is merged. If merged, use `<upstream_remote>/<default_branch>`.
+        If not merged, use the base PR's branch.
+      - If this PR has no dependency, use `<upstream_remote>/<default_branch>`.
+   b. Fetch the base ref: `git fetch <upstream_remote> <ref>`
+   c. Check if branch includes all base ref changes:
+      `git merge-base --is-ancestor <base-ref> HEAD`
+   d. If exit code is 0: branch is up to date — proceed to substep 5 (Implement)
+   e. If exit code is 1: branch is behind or diverged — rebase onto the base ref:
+      - Run `git rebase <base-ref>`
+      - If conflicts occur: edit affected files to resolve, then run
+        `git rebase --continue`. If conflicts persist after retry, run
+        `git rebase --abort` and raise a <blocker>Rebase conflict when syncing
+        branch with base — which files conflict and how should I
+        resolve?</blocker>
+      - Force-push the rebased branch per `## Git Strategy` in `.cece/config.md`
 5. **Implement**: Write code to implement the planned PR, committing as you progress
 6. **Test**: Execute the test plan. If tests fail, fix before proceeding.
    - If test plan says "User approved: no tests", skip testing for this PR
@@ -217,9 +232,9 @@ Work through each planned PR:
    - Create PR targeting `<default_branch>`, linking to the issue ("Fixes #N" or "Part of #N")
    - Assign user as reviewer
    - Update Plan comment: add PR link (do not check off until merged)
-8. **Rebase dependents**: If this PR has dependent branches (marked in Plan),
-   spawn the `git-rebase-dependents` agent. If it returns conflicts, raise a
-   <blocker>Rebase conflict in dependent — [agent message]</blocker>
+8. **Rebase dependents**: If this PR has dependent branches (marked with
+   `(depends on PR N)` in the Plan), rebase them onto this branch after pushing.
+   See "Auto-rebase procedure" below.
 9. **Repeat** for remaining PRs
 
 ### Step 4: Handling Reviews
@@ -234,13 +249,37 @@ When PR reviews come in, evaluate each comment:
 After addressing comments:
 
 5. Push fixes to your branch per `## Git Strategy` in `.cece/config.md`
-6. **Rebase dependents**: If this PR has dependent branches (marked in Plan),
-   spawn the `git-rebase-dependents` agent after pushing your fixes.
+6. **Rebase dependents**: If this PR has dependent branches (marked with
+   `(depends on PR N)` in the Plan), rebase them onto this branch after pushing
+   your fixes. See "Auto-rebase procedure" below.
 7. In each thread, explain what you changed or why you declined the feedback (with user approval)
 8. Update the Plan comment if PR scope changed based on review
 9. If review requires changes to Definition of Done, tell the user to run `/cece:scope`
 10. If review requires changes to Approach, Architectural Decisions, or Q&A, tell the
     user to run `/cece:design`
+
+### Auto-rebase procedure
+
+When your branch changes and has dependents listed in the Plan comment:
+
+1. Parse the Plan comment for PRs marked with `(depends on PR N)` where N is the
+   current PR number
+2. For each dependent branch:
+   a. Checkout the dependent branch
+   b. Check if the base PR (this PR) is merged. If merged, rebase onto
+      `<upstream_remote>/<default_branch>` instead of this branch.
+   c. Rebase: `git rebase <target>`
+   d. If conflicts occur:
+      - Read conflicting files, resolve the conflicts, run `git add` then `git rebase --continue`
+      - If resolution fails after one retry
+      - If still failing, abort the rebase (`git rebase --abort`) and raise a
+        <blocker>Rebase conflict in dependent branch — which files conflict and
+        how should I resolve?</blocker>
+   e. Force-push the rebased branch per `## Git Strategy` in `.cece/config.md`
+3. Return to the original branch and continue
+
+NEVER rebase branches that do not match the naming convention in `.cece/config.md`
+or are not listed as dependents in the Plan comment.
 
 ### Step 5: Blockers
 
