@@ -95,7 +95,8 @@ A comment on the issue with the `## Plan` heading. Created by `/cece:plan`,
 updated by `/cece:progress`.
 
 **Update when:**
-- PR is completed (check it off, add link)
+- PR is merged (check it off)
+- PR is created (add link, but do not check off)
 - PR scope changes based on review feedback
 
 ### Comments
@@ -162,20 +163,22 @@ Return to chat mode.
 
 1. Read the Approach, Architectural Decisions, and Q&A from the Design comment
 2. Read the Plan comment (task, test plan, planned PRs)
-3. Parse current state: which PRs are done, pending, any blockers
-4. Check open PRs for unaddressed reviews
-5. **Check CI status** for all open PRs:
+3. Parse current state: which PRs are linked, pending, any blockers
+4. **Check merge status**: For each linked PR that is not yet checked off, query
+   whether it has been merged. Check off any PRs that are now merged.
+5. Check open PRs for unaddressed reviews
+6. **Check CI status** for all open PRs:
    - Query CI/pipeline status via platform API (e.g., `gh pr checks`)
    - If any PR has failing CI, note the failures for the summary
    - Treat CI failures like review feedback: attempt to fix them during execution
-6. Present summary to user: what's planned, done, remaining, pending reviews, CI status
-7. Announce:
+7. Present summary to user: what's planned, done, remaining, pending reviews, CI status
+8. Announce:
 
 <response>
 🔥 Resuming progress on issue.
 </response>
 
-8. Proceed to Step 3. (Step 4 applies when reviews arrive during execution.)
+9. Proceed to Step 3. (Step 4 applies when reviews arrive during execution.)
 
 ### Step 3: Execution
 
@@ -213,7 +216,7 @@ Work through each planned PR:
      blocker if a constraint prevents completion.
    - Create PR targeting `<default_branch>`, linking to the issue ("Fixes #N" or "Part of #N")
    - Assign user as reviewer
-   - Update Plan comment: check off completed PR, add link
+   - Update Plan comment: add PR link (do not check off until merged)
 8. **Rebase dependents**: If this PR has dependent branches (marked in Plan),
    spawn the `git-rebase-dependents` agent. If it returns conflicts, raise a
    <blocker>Rebase conflict in dependent — [agent message]</blocker>
@@ -279,7 +282,8 @@ Re-run `/cece:progress <issue-ref>` to continue.
 
 When all planned PRs are created and the task is fully complete:
 
-1. Verify all PRs are checked off in the Plan comment
+1. Verify all PRs are linked in the Plan comment (they may not be checked off
+   yet — PRs are only checked off when merged)
 2. Run the full test plan to verify all PRs work together (skip if "User approved: no tests")
 3. For each Definition of Done item, confirm the implementation meets it exactly.
    If any item is unmet, raise a blocker — do not declare completion.
