@@ -171,7 +171,14 @@ Return to chat mode.
    - Query CI/pipeline status via platform API (e.g., `gh pr checks`)
    - If any PR has failing CI, note the failures for the summary
    - Treat CI failures like review feedback: attempt to fix them during execution
-7. **Sync branches**: For each open PR, ensure its branch is up to date:
+7. Present summary to user: what's planned, done, remaining, pending reviews, CI status
+8. Announce:
+
+<response>
+🔥 Resuming progress on #<N>. Syncing branches...
+</response>
+
+9. **Sync branches**: For each open PR, ensure its branch is up to date:
    a. Determine upstream remote and default branch:
       - Read `Upstream` from `## Git` in `.cece/config.md` (e.g., `lthms/cece`)
       - Run `git remote -v` to find which remote's URL contains the Upstream value — this is `<upstream_remote>`
@@ -185,14 +192,13 @@ Return to chat mode.
       - If behind (exit code 1): rebase onto base ref and force-push per `## Git Strategy`
       - If conflicts occur and cannot be resolved after one retry, raise a
         <blocker>Rebase conflict — which files conflict and how should I resolve?</blocker>
-8. Present summary to user: what's planned, done, remaining, pending reviews, CI status
-9. Announce:
+10. Announce:
 
 <response>
-🔥 Resuming progress on issue.
+🔥 Branches synced. Ready to work.
 </response>
 
-10. Proceed to Step 3. (Step 4 applies when reviews arrive during execution.)
+11. Proceed to Step 3. (Step 4 applies when reviews arrive during execution.)
 
 ### Step 3: Execution
 
